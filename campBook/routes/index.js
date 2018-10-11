@@ -51,12 +51,4 @@ router.get("/logout", function(req, res) {
     res.redirect("/camplist");
 });
 
-//middleware 
-function isLogegdIn(req, res, next){  // next is the next thing that comes after middleware e.g. function(req, res)
-    if (req.isAuthenticated()){
-        return next(); // exec next thing 
-    } 
-    res.redirect("/login");
-}
-
 module.exports = router;

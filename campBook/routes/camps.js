@@ -2,6 +2,7 @@
 var express = require("express");
 var router  = express.Router();
 var Camp = require("../models/camp");
+var middleware = require("../middleware"); // this automatically requires index.js inside
 
 
 router.get("/", function(req, res){  // NOTE: this is in fact /camplist
@@ -18,12 +19,12 @@ router.get("/", function(req, res){  // NOTE: this is in fact /camplist
 });
 
 // NEW 
-router.get("/new", isLogegdIn, function(req, res){ // note: this is in fact /camplist/new
+router.get("/new", middleware.isLogegdIn, function(req, res){ // note: this is in fact /camplist/new
     res.render("camps/new")
 });
 
 // CREATE 
-router.post("/", isLogegdIn, function(req, res){
+router.post("/", middleware.isLogegdIn, function(req, res){
     var name = req.body.name;
     var image = req.body.image;
     var desc = req.body.description;
@@ -63,7 +64,7 @@ router.get("/:id", function(req, res){
 
 // EDIT 
 // form to update the camp
-router.get("/:id/edit", checkOwnership, function(req,res){
+router.get("/:id/edit", middleware.checkCampOwnership, function(req,res){
     Camp.findById(req.params.id, function(err, foundCamp){
         if (err){
             console.log(err);
@@ -77,7 +78,7 @@ router.get("/:id/edit", checkOwnership, function(req,res){
 // UPDATE 
 // put request route 
 // redirect to show page 
-router.put("/:id", checkOwnership, function(req, res){
+router.put("/:id", middleware.checkCampOwnership, function(req, res){
     Camp.findByIdAndUpdate(req.params.id, req.body.camp, function(err, foundCamp){
         if (err){
             res.redirect("/camplist");
@@ -89,7 +90,7 @@ router.put("/:id", checkOwnership, function(req, res){
 });
 
 //DESTROTY 
-router.delete("/:id", checkOwnership, function(req, res){
+router.delete("/:id", middleware.checkCampOwnership, function(req, res){
     Camp.findByIdAndDelete(req.params.id, function(err){
         if (err){
             console.log(err);
@@ -98,38 +99,6 @@ router.delete("/:id", checkOwnership, function(req, res){
         res.redirect("/camplist");
     })
 });
-
-//middleware 
-//Authentication 
-function isLogegdIn(req, res, next){  // next is the next thing that comes after middleware e.g. function(req, res)
-    if (req.isAuthenticated()){
-        return next(); // exec next thing 
-    } 
-    res.redirect("/login");
-}
-
-//Authorization 
-function checkOwnership(req, res, next){
-    // check if user is logged in
-    if (req.isAuthenticated()){
-        // find camp to check if the author id matches the user id 
-        Camp.findById(req.params.id, function(err, foundCamp) {
-            if (err){
-                res.redirect("back");
-            } else {
-                // check if camp author id matches user id 
-                if (foundCamp.author.id.equals(req.user._id)){ // Note: author.is is an object, user._id is a string, so we can't use == or ===
-                                                           // note: 
-                    next();
-                } else {
-                    res.redirect("back");
-                }
-            }
-        })
-    } else {
-        res.redirect("back");
-    }
-}
 
 
 module.exports = router;
