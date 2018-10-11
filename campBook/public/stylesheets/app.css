@@ -13,3 +13,11 @@
 #delete-from{
     display: inline;
 }
+
+.img-responsive{
+    height:50px;
+}
+
+.thumbnail img{
+    height: 200px;
+}

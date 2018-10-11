@@ -9,6 +9,7 @@ middlewareObj.isLogegdIn = function(req, res, next){  // next is the next thing 
     if (req.isAuthenticated()){
         return next(); // exec next thing 
     } 
+    req.flash("error", "You must log in first ..."); // Note: this should come before redirecting to next. 
     res.redirect("/login");
 }
 
@@ -27,11 +28,13 @@ middlewareObj.checkCampOwnership = function(req, res, next){
                                                            // note: 
                     next();
                 } else {
+                    req.flash("error", "Permission denied.");
                     res.redirect("back");
                 }
             }
         })
     } else {
+        req.flash("error", "You must log in first ...");
         res.redirect("back");
     }
 }
@@ -49,11 +52,13 @@ middlewareObj.checkCommentOwnership = function (req, res, next){
                 if (foundComment.author.id.equals(req.user._id)){ // Note: author.is is an object, user._id is a string, so we can't use == or ===
                     next();
                 } else {
+                    req.flash("error", "Permission denied.");
                     res.redirect("back");
                 }
             }
         })
     } else {
+        req.flash("error", "You must log in first ...");
         res.redirect("back");
     }
 }

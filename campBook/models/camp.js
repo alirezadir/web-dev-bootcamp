@@ -2,7 +2,8 @@ var mongoose = require("mongoose");
 // Camp Schema in db  
 var campSchema = new mongoose.Schema({
     name: String, 
-    image: String, 
+    image: String,
+    price: String, 
     desc: String, 
     author: {
         id: {

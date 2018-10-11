@@ -4,7 +4,9 @@
         <div class="col-md-3">
             <p class="lead">Camp Book</p>
             <div class="list-group">
-                <li class="list-group-item" active>Info 1</li>
+                <li class="list-group-item" active>
+                    <a href="/camplist">View Campgrounds</a>
+                </li>
                 <li class="list-group-item">Info 2</li>
                 <li class="list-group-item">Info 3</li>
             </div>
@@ -13,7 +15,7 @@
             <div class="thumbnail">
                 <img class="img-responsive" src="<%= camp.image%>">
                 <div class="caption-full">
-                    <h4 class="pull-right">$9.00/night</h4>
+                    <h4 class="pull-right">$<%=camp.price%>/night</h4>
                     <h4><a><%= camp.name%></a></h4>
                     <p><%= camp.desc%></p>
                     <p> 

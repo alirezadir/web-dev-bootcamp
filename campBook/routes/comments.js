@@ -46,6 +46,7 @@ router.post("/", middleware.isLogegdIn, function(req, res){
                  // associate comment to the camp
                  foundCamp.comments.push(newComment);
                  foundCamp.save();
+                 req.flash("success", "Successfully created comment.");
                  res.redirect("/camplist/" + foundCamp._id);
              }
           });
@@ -60,6 +61,7 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, function(req, 
     Comment.findById(req.params.comment_id, function(err, foundComment){
         if (err){
             console.log(err);
+            req.flash("error", "Oops something went wrong.");
             res.redirect("back");
         } else {
             res.render("comments/edit", {camp_id:req.params.id, comment:foundComment});
@@ -71,8 +73,10 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, function(req, 
 router.put("/:comment_id",middleware.checkCommentOwnership, function(req, res){
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment,  function(err, updatedComment){
         if(err) {
+            req.flash("error", "Oops something went wrong.");
             res.redirect("back");
         } else{
+            req.flash("success", "Successfully updated the comment!");
             res.redirect("/camplist/" + req.params.id);
         }
     })
