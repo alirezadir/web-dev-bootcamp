@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs"); //avoid extension .ejs
 app.use(express.static(__dirname + "/public")); // adding stylesheets in public 
 app.use(methodOverride("_method"));
-// seedDB();  // seed disabled for now 
+seedDB();  // seed disabled for now 
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({

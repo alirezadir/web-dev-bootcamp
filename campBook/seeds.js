@@ -26,38 +26,38 @@ function seedDB(){
         if(err){
             console.log(err);
         }
-        console.log("removed Camps!");
-        Comment.remove({}, function(err) {
-            if(err){
-                console.log(err);
-            }
-            console.log("removed comments!");
-             //add a few Camps 
-             // NOTE: we do this inside a callback to remove - cause o/w they might get removed after created since removing may take a while  
-            data.forEach(function(seed){
-                Camp.create(seed, function(err, Camp){
-                    if(err){
-                        console.log(err)
-                    } else {
-                        console.log("added a Camp");
-                        //create a comment
-                        Comment.create(
-                            {
-                                text: "This place is great, but I wish there was internet",
-                                author: "Homer"
-                            }, function(err, comment){
-                                if(err){
-                                    console.log(err);
-                                } else {
-                                    Camp.comments.push(comment);
-                                    Camp.save();
-                                    console.log("Created new comment");
-                                }
-                            });
-                    }
-                });
-             });
-        });
+        // console.log("removed Camps!");
+        // Comment.remove({}, function(err) {
+        //     if(err){
+        //         console.log(err);
+        //     }
+        //     console.log("removed comments!");
+        //      //add a few Camps 
+        //      // NOTE: we do this inside a callback to remove - cause o/w they might get removed after created since removing may take a while  
+        //     data.forEach(function(seed){
+        //         Camp.create(seed, function(err, Camp){
+        //             if(err){
+        //                 console.log(err)
+        //             } else {
+        //                 console.log("added a Camp");
+        //                 //create a comment
+        //                 Comment.create(
+        //                     {
+        //                         text: "This place is great, but I wish there was internet",
+        //                         author: "Homer"
+        //                     }, function(err, comment){
+        //                         if(err){
+        //                             console.log(err);
+        //                         } else {
+        //                             Camp.comments.push(comment);
+        //                             Camp.save();
+        //                             console.log("Created new comment");
+        //                         }
+        //                     });
+        //             }
+        //         });
+        //      });
+        // });
     }); 
     //add a few comments
 }
