@@ -19,6 +19,13 @@
                     <p> 
                     <em> Submitted by <%= camp.author.username%>  </em>
                     </p>
+                    <!-- check if user has ownership for edit/del -->
+                    <% if (currentUser && camp.author.id.equals(currentUser._id)) { %>   <!-- note: we set currentUser in app.js-->
+                        <a class="btn btn-xs btn-warning" href="/camplist/<%= camp._id%>/edit">Edit</a>
+                        <form id="delete-from" action="/camplist/<%= camp._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-xs btn-danger">Delete</button>
+                        </form>
+                    <% } %>
                 </div>
             </div>
             <div class="well">
