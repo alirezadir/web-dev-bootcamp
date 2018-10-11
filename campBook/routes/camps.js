@@ -27,15 +27,18 @@ router.post("/", isLogegdIn, function(req, res){
     var name = req.body.name;
     var image = req.body.image;
     var desc = req.body.description;
-    var newCamp = {name: name, image: image, desc:desc};
-    // push from array 
-    //camps.push({name:name, image:image});
+    var author = {
+        id: req.user._id, 
+        username: req.user.username
+    }
+    var newCamp = {name: name, image: image, desc:desc, author:author};
     //res.redirect("/camplist");
     // push from db
     Camp.create(newCamp, function(err, newcamp){
         if (err){
             console.log("Error adding new camps");
         } else{
+            console.log(newcamp);
             res.redirect("/camplist");
         }
     });
