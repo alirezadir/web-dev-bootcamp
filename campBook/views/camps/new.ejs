@@ -1,0 +1,25 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <div class="row">
+        <h1 style="text-align:center;"> Add new camp</h1> 
+        <div style="width: 30%; margin:25px  auto;">
+            <form action="/camplist" method="POST">
+                <div class="form-group">
+                    <input class="form-control" type="text" name="name" placeholder="name"></input>        
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="image" placeholder="image url"></input>        
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="description" placeholder="description"></input>        
+                </div>
+                <div class="form-group">
+                     <input class="btn btn-lg btn-primary btn-block" type="submit"></input>       
+                </div>
+            </form>
+        <a href="/camplist"> Go back </a>
+        </div>
+    </div>
+</div>
+<% include ../partials/footer %>
