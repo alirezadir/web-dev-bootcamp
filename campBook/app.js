@@ -18,8 +18,8 @@ var commentRoutes    = require("./routes/comments"),
     
 var url = process.env.DATABASEURL || "mongodb://localhost/yelp_camp_v6"
 mongoose.connect(url, { useNewUrlParser: true });
-// export DATABASEURL=
-// heroku config:set DATABASEURL=
+// For local: export DATABASEURL=
+// For heroku: heroku config:set DATABASEURL=
 
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -27,7 +27,7 @@ app.set("view engine", "ejs"); //avoid extension .ejs
 app.use(express.static(__dirname + "/public")); // adding stylesheets in public 
 app.use(methodOverride("_method"));
 app.use(flash());
-//seedDB();  // seed disabled for now 
+seedDB();  // seed disabled for now 
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -52,6 +52,7 @@ app.use("/",indexRoutes);
 app.use("/camplist", campgroundRoutes);
 app.use("/camplist/:id/comments",commentRoutes);
 
-app.listen(process.env.PORT, process.env.IP, function(){
-   console.log("The YelpCamp Server Has Started!");
+app.listen(3000, process.env.IP, function(){
+   console.log("The YelpCamp Server Has Started at");
+   console.log("port: " + this.address().port);
 });

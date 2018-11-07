@@ -18,6 +18,12 @@
     height:50px;
 }
 
-.thumbnail img{
+/* .thumbnail img{
     height: 200px;
+} */
+
+/* Google Maps */
+#map {
+    height: 400px;
+    width: 100%;
 }

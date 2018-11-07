@@ -5,6 +5,9 @@ var campSchema = new mongoose.Schema({
     image: String,
     price: String, 
     desc: String, 
+    location: String, 
+    lat: Number, 
+    lng: Number,
     author: {
         id: {
             type: mongoose.Schema.Types.ObjectId, 
@@ -19,6 +22,7 @@ var campSchema = new mongoose.Schema({
         }
     ]
 });
+
 // Camp model in db  
 // var Camp = mongoose.model("Camp", campSchema);   
 module.exports = mongoose.model("Camp", campSchema);

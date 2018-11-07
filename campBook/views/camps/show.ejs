@@ -9,6 +9,7 @@
                 </li>
                 <li class="list-group-item">Info 2</li>
                 <li class="list-group-item">Info 3</li>
+                <div id="map"></div>
             </div>
         </div>
         <div class="col-md-9">
@@ -43,10 +44,12 @@
                             <p>
                                 <strong></strong> - <%= comment.text%>
                             </p>
-                            <a class="btn btn-xs btn-warning" href="/camplist/<%= camp._id%>/comments/<%= comment._id%>/edit">edit</a>
-                            <form id="delete-from" action="/camplist/<%= camp._id%>/comments/<%= comment._id%>?_method=DELETE" method="POST">
-                                <button class="btn btn-xs btn-danger">Delete</button>
-                            </form>
+                            <% if (currentUser && camp.author.id.equals(currentUser._id)) { %>   <!-- note: we set currentUser in app.js-->
+                                <a class="btn btn-xs btn-warning" href="/camplist/<%= camp._id%>/edit">Edit</a>
+                                <form id="delete-from" action="/camplist/<%= camp._id%>?_method=DELETE" method="POST">
+                                    <button class="btn btn-xs btn-danger">Delete</button>
+                                </form>
+                            <% } %>
                         </div>
                     </div>
                 <% }) %> 
@@ -55,6 +58,37 @@
         </div>
     </div>
 </div>
+<!-- Google Map -->
 
+<script>
+    function initMap() {
+      var lat = <%= camp.lat %>;
+      var lng = <%= camp.lng %>;
+      var center = {lat: lat, lng: lng };
+      var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 8,
+          center: center,
+          scrollwheel: false
+      });
+      var contentString = `
+        <strong><%= camp.name %><br />
+        <%= camp.location %></strong>
+        <p><%= camp.desc%></p>
+      `
+      var infowindow = new google.maps.InfoWindow({
+        content: contentString
+      });
+      var marker = new google.maps.Marker({
+          position: center,
+          map: map
+      });
+      marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });
+    }
+  </script>
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap"></script> -->
+
+<script async defer src= '<%="https://maps.googleapis.com/maps/api/js?key=" + process.env.MAP_API_KEY +"&callback=initMap"%>'></script>
 
 <% include ../partials/footer %>
