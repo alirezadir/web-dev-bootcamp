@@ -19,8 +19,8 @@
                     <h4 class="pull-right">$<%=camp.price%>/night</h4>
                     <h4><a><%= camp.name%></a></h4>
                     <p><%= camp.desc%></p>
-                    <p> 
-                    <em> Submitted by <%= camp.author.username%>  </em>
+                    <p>
+                        <em>Submitted by: <%= camp.author.username %>, <%= moment(camp.createdAt).fromNow() %></em>
                     </p>
                     <!-- check if user has ownership for edit/del -->
                     <% if (currentUser && camp.author.id.equals(currentUser._id)) { %>   <!-- note: we set currentUser in app.js-->
@@ -40,7 +40,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <strong><%=comment.author.username%></strong>
-                            <span class="pull-right">10 days ago</span>
+                            <span class="pull-right"><%= moment(comment.createdAt).fromNow() %></span>
                             <p>
                                 <strong></strong> - <%= comment.text%>
                             </p>

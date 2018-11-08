@@ -27,6 +27,7 @@ app.set("view engine", "ejs"); //avoid extension .ejs
 app.use(express.static(__dirname + "/public")); // adding stylesheets in public 
 app.use(methodOverride("_method"));
 app.use(flash());
+app.locals.moment = require('moment');
 seedDB();  // seed disabled for now 
 
 // PASSPORT CONFIGURATION
