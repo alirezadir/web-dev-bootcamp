@@ -28,7 +28,7 @@ app.use(express.static(__dirname + "/public")); // adding stylesheets in public
 app.use(methodOverride("_method"));
 app.use(flash());
 app.locals.moment = require('moment');
-seedDB();  // seed disabled for now 
+//seedDB();  // seed disabled for now 
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({

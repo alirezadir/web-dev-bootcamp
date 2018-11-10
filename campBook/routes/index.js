@@ -20,6 +20,15 @@ router.get("/register", function(req, res) {
 // sign up logic
 router.post("/register", function(req, res) {
     var newUser = new User({username:req.body.username});  // user does not save password but a hashed version of pass through register method
+    console.log("admin code")
+    console.log(process.env.ADMIN_CODE);
+    if (req.body.adminCode === process.env.ADMIN_CODE){
+        newUser.isAdmin = true;
+        console.log("user is an admin");
+    } else {
+        console.log("admin code is")
+        console.log(req.body.adminCode);
+    }
     User.register(newUser, req.body.password, function(err, user){
        if (err){
            console.log(err);

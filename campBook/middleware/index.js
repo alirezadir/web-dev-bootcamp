@@ -24,7 +24,7 @@ middlewareObj.checkCampOwnership = function(req, res, next){
                 res.redirect("back");
             } else {
                 // check if camp author id matches user id 
-                if (foundCamp.author.id.equals(req.user._id)){ // Note: author.is is an object, user._id is a string, so we can't use == or ===
+                if (foundCamp.author.id.equals(req.user._id) || req.user.isAdmin){ // Note: author.is is an object, user._id is a string, so we can't use == or ===
                                                            // note: 
                     next();
                 } else {
@@ -49,7 +49,7 @@ middlewareObj.checkCommentOwnership = function (req, res, next){
                 res.redirect("back");
             } else {
                 // check if camp author id matches user id 
-                if (foundComment.author.id.equals(req.user._id)){ // Note: author.is is an object, user._id is a string, so we can't use == or ===
+                if (foundComment.author.id.equals(req.user._id) || req.user.isAdmin){ // Note: author.is is an object, user._id is a string, so we can't use == or ===
                     next();
                 } else {
                     req.flash("error", "Permission denied.");
