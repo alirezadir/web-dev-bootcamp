@@ -20,7 +20,8 @@
                     <h4><a><%= camp.name%></a></h4>
                     <p><%= camp.desc%></p>
                     <p>
-                        <em>Submitted by: <%= camp.author.username %>, <%= moment(camp.createdAt).fromNow() %></em>
+                        <em>Submitted by: <a href="/users/<%=camp.author.id%>">   <%= camp.author.username %></a>, 
+                            <%= moment(camp.createdAt).fromNow() %></em>
                     </p>
                     <!-- check if user has ownership for edit/del -->
                     <% if (currentUser && camp.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin) { %>   <!-- note: we set currentUser in app.js-->
