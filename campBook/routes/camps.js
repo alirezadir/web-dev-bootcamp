@@ -14,16 +14,30 @@ var options = {
  
 var geocoder = NodeGeocoder(options);
 router.get("/", function(req, res){  // NOTE: this is in fact /camplist
-    console.log(req.user);
-    // render form an array 
-    // res.render("camplist.ejs", {camps:camps});
-    Camp.find({}, function(err, allcamps){  // find output -> allcamps
-        if (err){
-            console.log("Error finding camps");
-        } else{
-            res.render("camps/index", {camps:allcamps});
-        }
-    });
+    // eval(require("locus"));
+    // console.log(req.user);
+    if (req.query.search) {
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Camp.find({name: regex}, function(err, allcamps){  // find output -> allcamps
+            if (err){
+                console.log("Error finding camps");
+            } else{
+                res.render("camps/index", {camps:allcamps});
+            }
+        });
+
+    } else{
+         // get all camps from DB
+        Camp.find({}, function(err, allcamps){  // find output -> allcamps
+            if (err){
+                console.log("Error finding camps");
+            } else{
+                res.render("camps/index", {camps:allcamps});
+            }
+        });
+    }
+
+   
 });
 
 //CREATE - add new campground to DB
@@ -139,5 +153,9 @@ router.delete("/:id", middleware.checkCampOwnership, function(req, res){
         res.redirect("/camplist");
     })
 });
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 module.exports = router;
