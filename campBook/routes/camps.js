@@ -97,6 +97,7 @@ router.post("/", middleware.isLogegdIn, upload.single('image'), function(req, re
         var name = req.body.name;
         // var image = req.body.image;
         var image = result.secure_url;
+        var imageId = result.public_id;
         var price = req.body.price;
         var desc = req.body.description;
         var author = {
@@ -113,7 +114,7 @@ router.post("/", middleware.isLogegdIn, upload.single('image'), function(req, re
         var lat = data[0].latitude;
         var lng = data[0].longitude;
         var location = data[0].formattedAddress;
-        var newCamp = {name: name, price:price, image: image, desc: desc, author:author, location: location, lat: lat, lng: lng};
+        var newCamp = {name: name, price:price, image: image, imageId:imageId, desc: desc, author:author, location: location, lat: lat, lng: lng};
         // Create a new campground and save to DB
         Camp.create(newCamp, function(err, newlyCreated){
             if(err){
@@ -166,15 +167,12 @@ router.get("/:id/edit", middleware.checkCampOwnership, function(req,res){
 });
 
 // UPDATE CAMPGROUND ROUTE
-router.put("/:id", middleware.checkCampOwnership, function(req, res){
+router.put("/:id", middleware.checkCampOwnership, upload.single('image'),function(req, res){
     geocoder.geocode(req.body.camp.location, function (err, data) {
       console.log("req.body:") 
       console.log(req.body);
       if (err || !data.length) {
-        //req.flash('error', 'Invalid address');
-        req.flash('error', 'Invalid geo');
-        console.log("error in geocode");
-        // console.log(GEOCODER_API_KEY);
+        req.flash('error', 'Invalid address');
         console.log(err);
         return res.redirect('back');
       }
@@ -182,12 +180,31 @@ router.put("/:id", middleware.checkCampOwnership, function(req, res){
       req.body.camp.lng = data[0].longitude;
       req.body.camp.location = data[0].formattedAddress;
   
-      Camp.findByIdAndUpdate(req.params.id, req.body.camp, function(err, foundCamp){
+      Camp.findById(req.params.id, function(err, foundCamp){
           if(err){
               req.flash("error", err.message);
-              //console.log(err);
               res.redirect("back");
           } else {
+              if (req.file){
+                  cloudinary.v2.uploader.destroy(foundCamp.imageId, function(err){
+                    if (err){
+                        req.flash("error",err.message);
+                        return res.redirect("back");
+                    }
+                    cloudinary.v2.uploader.upload(req.file.path, function(err, result){
+                        if (err){
+                            req.flash("error",err.message);
+                            return res.redirect("back");
+                        }
+                        foundCamp.imageId = result.public_id;
+                        foundCamp.image = result.secure_url ;
+                    });
+                  });
+              }
+              for (var v in req.body.camp) foundCamp[v] = req.body.camp[v]
+            //   camp.name = req.body.camp.name
+            //   camp.desc = req.body.camp.
+              // req.body.camp
               req.flash("success","Successfully Updated!");
               res.redirect("/camplist/" + foundCamp._id);
           }

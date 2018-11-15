@@ -3,6 +3,7 @@ var mongoose = require("mongoose");
 var campSchema = new mongoose.Schema({
     name: String, 
     image: String,
+    imageId: String, 
     price: String, 
     desc: String, 
     location: String, 
