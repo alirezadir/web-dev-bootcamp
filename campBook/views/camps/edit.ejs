@@ -4,7 +4,7 @@
     <div class="row">
         <h1 style="text-align:center"> Edit camp <%= camp.name%></h1> 
         <div style="width: 30%; margin:25px  auto;">
-            <form action="/camplist/<%= camp._id %>?_method=PUT" method="POST">
+            <form action="/camplist/<%= camp._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <input class="form-control" type="text" name="camp[name]" value="<%=camp.name%>" ></input>        
                 </div>
@@ -16,7 +16,7 @@
                 </div> -->
                 <div class="form-group">
                         <label for="image">Image</label>
-                        <input type="file" id="image" name="camp[image]" accept="image/*">
+                        <input type="file" id="image" name="image" accept="image/*">
                 </div>
 
                 <div class="form-group">

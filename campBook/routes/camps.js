@@ -26,6 +26,7 @@ cloudinary.config({
 });
 
 
+
 var NodeGeocoder = require('node-geocoder');
 var options = {
     provider: 'google',
@@ -35,28 +36,8 @@ var options = {
   };
  
 var geocoder = NodeGeocoder(options);
-var multer = require('multer');
-var storage = multer.diskStorage({
-  filename: function(req, file, callback) {
-    callback(null, Date.now() + file.originalname);
-  }
-});
-var imageFilter = function (req, file, cb) {
-    // accept image files only
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
-        return cb(new Error('Only image files are allowed!'), false);
-    }
-    cb(null, true);
-};
-var upload = multer({ storage: storage, fileFilter: imageFilter})
 
-var cloudinary = require('cloudinary');
 
-cloudinary.config({ 
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
 
 router.get("/", function(req, res){  // NOTE: this is in fact /camplist
     // eval(require("locus"));
@@ -81,8 +62,6 @@ router.get("/", function(req, res){  // NOTE: this is in fact /camplist
             }
         });
     }
-
-   
 });
 
 //CREATE - add new campground to DB
@@ -91,6 +70,7 @@ router.post("/", middleware.isLogegdIn, upload.single('image'), function(req, re
     cloudinary.v2.uploader.upload(req.file.path, function(err, result) {
         if(err) {
           req.flash('error', err.message);
+          console.log("err in cloudinRY ", err)
           return res.redirect('back');
         }
         // get data from form and add to campgrounds array
@@ -108,7 +88,7 @@ router.post("/", middleware.isLogegdIn, upload.single('image'), function(req, re
         geocoder.geocode(req.body.location, function (err, data) {
         if (err || !data.length) {
             req.flash('error', 'Invalid geo');
-            console.log(err);
+            console.log("GEO LOG ", err);
             return res.redirect('back');
         }
         var lat = data[0].latitude;
@@ -118,13 +98,13 @@ router.post("/", middleware.isLogegdIn, upload.single('image'), function(req, re
         // Create a new campground and save to DB
         Camp.create(newCamp, function(err, newlyCreated){
             if(err){
-                console.log(err);
+                console.log("create log", err);
                 req.flash('error', err.message);
                 return res.redirect('back');
             } else {
                 //redirect back to campgrounds page
                 console.log(newlyCreated);
-                res.redirect("/camplist"+newlyCreated.id);
+                res.redirect("/camplist/"+newlyCreated.id);
             }
         });
         });
@@ -166,11 +146,12 @@ router.get("/:id/edit", middleware.checkCampOwnership, function(req,res){
     })
 });
 
+
+
 // UPDATE CAMPGROUND ROUTE
 router.put("/:id", middleware.checkCampOwnership, upload.single('image'),function(req, res){
     geocoder.geocode(req.body.camp.location, function (err, data) {
-      console.log("req.body:") 
-      console.log(req.body);
+      console.log("req.file: ",req.file) 
       if (err || !data.length) {
         req.flash('error', 'Invalid address');
         console.log(err);
@@ -180,31 +161,32 @@ router.put("/:id", middleware.checkCampOwnership, upload.single('image'),functio
       req.body.camp.lng = data[0].longitude;
       req.body.camp.location = data[0].formattedAddress;
   
-      Camp.findById(req.params.id, function(err, foundCamp){
+      Camp.findById(req.params.id, async function(err, foundCamp){
           if(err){
               req.flash("error", err.message);
               res.redirect("back");
           } else {
               if (req.file){
-                  cloudinary.v2.uploader.destroy(foundCamp.imageId, function(err){
-                    if (err){
-                        req.flash("error",err.message);
-                        return res.redirect("back");
-                    }
-                    cloudinary.v2.uploader.upload(req.file.path, function(err, result){
+                  try {
+                    await cloudinary.v2.uploader.destroy(foundCamp.imageId);
                         if (err){
                             req.flash("error",err.message);
                             return res.redirect("back");
                         }
+                        var result  =  await cloudinary.v2.uploader.upload(req.file.path);
                         foundCamp.imageId = result.public_id;
                         foundCamp.image = result.secure_url ;
-                    });
-                  });
+                  } catch {
+                    req.flash("error", err.message);
+                    return res.redirect("back");
+                  }
+                  
               }
               for (var v in req.body.camp) foundCamp[v] = req.body.camp[v]
             //   camp.name = req.body.camp.name
             //   camp.desc = req.body.camp.
               // req.body.camp
+              foundCamp.save();
               req.flash("success","Successfully Updated!");
               res.redirect("/camplist/" + foundCamp._id);
           }
